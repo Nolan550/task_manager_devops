@@ -39,7 +39,11 @@ tasks = [
         "completed": False
     }
 ]
-
+class TaskUpdate(BaseModel):
+    title: str = Field(min_length=1, max_length=100)
+    description: str = Field(default="", max_length=500)
+    priority: Literal["low", "medium", "high"] = "medium"
+    completed: bool = False
 
 @app.get("/")
 def home():
@@ -89,10 +93,21 @@ def update_task(task_id: int, updated_data: TaskUpdate):
 
     return {"error": "Task not found"}
 
-class TaskUpdate(BaseModel):
-    title: str = Field(min_length=1, max_length=100)
-    description: str = Field(default="", max_length=500)
-    priority: Literal["low", "medium", "high"] = "medium"
-    completed: bool = False
+@app.delete("/tasks/{task_id}", status_code=204)
+def delete_task(task_id: int):
+
+    for index, task in enumerate(tasks):
+
+        if task["id"] == task_id:
+
+            tasks.pop(index)
+
+            return
+
+    raise HTTPException(
+        status_code=404,
+        detail="Task not found"
+    )
+
 
 
