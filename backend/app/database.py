@@ -1,14 +1,13 @@
 import os
 from pathlib import Path
-
+from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, URL
+from sqlalchemy.orm import DeclarativeBase
 
-# Load the .env file from the project root
 env_path = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(env_path)
 
-# Read database configuration
 database_url = URL.create(
     drivername="postgresql+psycopg",
     username=os.getenv("DB_USER"),
@@ -18,5 +17,21 @@ database_url = URL.create(
     database=os.getenv("DB_NAME"),
 )
 
-# Create SQLAlchemy engine
 engine = create_engine(database_url, echo=True)
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    autoflush=False,
+    autocommit=False
+)
+
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+class Base(DeclarativeBase):
+    pass
