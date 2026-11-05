@@ -4,8 +4,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from .database import get_db
 from . import models
 from .schemas import TaskCreate, TaskUpdate, TaskPatch, Task as TaskSchema
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Task Manager API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def commit_changes(db: Session):
     try:
