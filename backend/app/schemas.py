@@ -1,4 +1,7 @@
+
+from datetime import date
 from enum import Enum
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -12,6 +15,7 @@ class TaskCreate(BaseModel):
     title: str = Field(min_length=1, max_length=100)
     description: str = ""
     priority: Priority = Priority.medium
+    due_date: date | None = None
 
 
 class TaskUpdate(BaseModel):
@@ -19,6 +23,7 @@ class TaskUpdate(BaseModel):
     description: str = ""
     priority: Priority = Priority.medium
     completed: bool = False
+    due_date: date | None = None
 
 
 class TaskPatch(BaseModel):
@@ -26,6 +31,7 @@ class TaskPatch(BaseModel):
     description: str | None = None
     priority: Priority | None = None
     completed: bool | None = None
+    due_date: date | None = None
 
 
 class Task(TaskCreate):

@@ -1,4 +1,6 @@
-from sqlalchemy import Boolean, Integer, String, Text
+from datetime import date
+
+from sqlalchemy import Boolean, Integer, String, Text, Date
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .database import Base
@@ -12,3 +14,4 @@ class Task(Base):
     description: Mapped[str] = mapped_column(Text, default="")
     priority: Mapped[str] = mapped_column(String(10), default="medium", nullable=False)
     completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True)

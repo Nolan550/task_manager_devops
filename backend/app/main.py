@@ -1,3 +1,4 @@
+# Testing Docker bindmount and automatic reload
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
