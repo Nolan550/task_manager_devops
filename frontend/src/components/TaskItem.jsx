@@ -1,4 +1,19 @@
-import { Check, Pencil, Trash2 } from "lucide-react";
+
+import { Check, Pencil, Trash2, CalendarDays } from "lucide-react";
+
+function formatDueDate(dateString) {
+  if (!dateString) return null;
+
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 export default function TaskItem({ task, onToggle, onEdit, onDelete }) {
   return (
@@ -13,12 +28,21 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }) {
 
       <div className="task-content">
         <h3>{task.title}</h3>
+
         {task.description && <p>{task.description}</p>}
+
+        {task.due_date && (
+          <div className="due-date">
+            <CalendarDays size={15} />
+            <span>Due: {formatDueDate(task.due_date)}</span>
+          </div>
+        )}
 
         <div className="task-meta">
           <span className={`priority ${task.priority}`}>
             {task.priority} priority
           </span>
+
           <span className="task-status">
             {task.completed ? "Completed" : "Pending"}
           </span>

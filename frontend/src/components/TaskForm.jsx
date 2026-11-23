@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { X, Plus, Save } from "lucide-react";
 
@@ -5,6 +6,7 @@ export default function TaskForm({ onSubmit, editingTask, onCancel }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
+  const [dueDate, setDueDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -12,10 +14,12 @@ export default function TaskForm({ onSubmit, editingTask, onCancel }) {
       setTitle(editingTask.title);
       setDescription(editingTask.description || "");
       setPriority(editingTask.priority);
+      setDueDate(editingTask.due_date || "");
     } else {
       setTitle("");
       setDescription("");
       setPriority("medium");
+      setDueDate("");
     }
   }, [editingTask]);
 
@@ -31,6 +35,7 @@ export default function TaskForm({ onSubmit, editingTask, onCancel }) {
         title: title.trim(),
         description: description.trim(),
         priority,
+        due_date: dueDate || null,
         completed: editingTask?.completed ?? false,
       });
 
@@ -38,6 +43,7 @@ export default function TaskForm({ onSubmit, editingTask, onCancel }) {
         setTitle("");
         setDescription("");
         setPriority("medium");
+        setDueDate("");
       }
     } finally {
       setSubmitting(false);
@@ -96,6 +102,14 @@ export default function TaskForm({ onSubmit, editingTask, onCancel }) {
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
+
+      <label htmlFor="dueDate">Due date</label>
+      <input
+        id="dueDate"
+        type="date"
+        value={dueDate}
+        onChange={(event) => setDueDate(event.target.value)}
+      />
 
       <button className="primary-button" type="submit" disabled={submitting}>
         {editingTask ? <Save size={17} /> : <Plus size={17} />}

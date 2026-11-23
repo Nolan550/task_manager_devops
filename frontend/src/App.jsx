@@ -1,3 +1,4 @@
+// Testing Docker frontend bind mount and Vite HMR
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
