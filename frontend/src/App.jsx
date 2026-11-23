@@ -37,8 +37,32 @@ function App() {
   }
 
   useEffect(() => {
-    loadTasks();
-  }, []);
+  let isActive = true;
+
+  async function initialLoad() {
+    try {
+      const data = await taskService.getAll();
+
+      if (isActive) {
+        setTasks(data);
+      }
+    } catch (err) {
+      if (isActive) {
+        setError(err.message);
+      }
+    } finally {
+      if (isActive) {
+        setLoading(false);
+      }
+    }
+  }
+
+  initialLoad();
+
+  return () => {
+    isActive = false;
+  };
+}, []);
 
   async function handleCreateOrUpdate(taskData) {
     try {
@@ -217,6 +241,7 @@ function App() {
 
         <aside className="form-panel">
           <TaskForm
+            key={editingTask?.id ?? "new"}
             onSubmit={handleCreateOrUpdate}
             editingTask={editingTask}
             onCancel={() => setEditingTask(null)}

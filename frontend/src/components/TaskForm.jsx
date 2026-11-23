@@ -1,27 +1,16 @@
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { X, Plus, Save } from "lucide-react";
 
 export default function TaskForm({ onSubmit, editingTask, onCancel }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("medium");
-  const [dueDate, setDueDate] = useState("");
+  const [title, setTitle] = useState(editingTask?.title ?? "");
+  const [description, setDescription] = useState(
+    editingTask?.description ?? ""
+  );
+  const [priority, setPriority] = useState(
+    editingTask?.priority ?? "medium"
+  );
+  const [dueDate, setDueDate] = useState(editingTask?.due_date ?? "");
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (editingTask) {
-      setTitle(editingTask.title);
-      setDescription(editingTask.description || "");
-      setPriority(editingTask.priority);
-      setDueDate(editingTask.due_date || "");
-    } else {
-      setTitle("");
-      setDescription("");
-      setPriority("medium");
-      setDueDate("");
-    }
-  }, [editingTask]);
 
   async function handleSubmit(event) {
     event.preventDefault();
