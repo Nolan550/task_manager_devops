@@ -1,0 +1,65 @@
+
+name: Docker Image Publishing
+
+on:
+  workflow_run:
+    workflows: ["Task Manager CI"]
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  publish-images:
+    name: Build and Publish Docker Images
+    runs-on: ubuntu-latest
+
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout successful commit
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ghcr.io/nolan550/task_manager_devops-backend:latest
+            ghcr.io/nolan550/task_manager_devops-backend:${{ github.event.workflow_run.head_sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ghcr.io/nolan550/task_manager_devops-frontend:latest
+            ghcr.io/nolan550/task_manager_devops-frontend:${{ github.event.workflow_run.head_sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
